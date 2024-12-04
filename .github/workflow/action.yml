@@ -3,14 +3,14 @@ name: .NET Core CI/CD
 on:
   push:
     branches:
-      - main      # o cualquier rama que uses para producción
+      - main      
   pull_request:
     branches:
-      - main      # o cualquier rama que uses para producción
+      - main   
 
 jobs:
   build:
-    runs-on: windows-latest  # Puedes usar 'ubuntu-latest' si prefieres Linux
+    runs-on: windows-latest 
 
     steps:
     - name: Checkout code
@@ -19,7 +19,7 @@ jobs:
     - name: Set up .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0'  # Cambia a la versión que estés usando, como 7.0 o 8.0
+        dotnet-version: '8.0'  
 
     - name: Restore dependencies
       run: dotnet restore
@@ -34,9 +34,9 @@ jobs:
       run: dotnet publish --configuration Release --output ./publish
 
   deploy:
-    runs-on: ubuntu-latest  # Usualmente en Linux para despliegues, o usa 'windows-latest'
+    runs-on: ubuntu-latest  
 
-    needs: build  # Asegura que el paso de build se haya completado con éxito
+    needs: build 
 
     steps:
     - name: Checkout code
@@ -45,7 +45,7 @@ jobs:
     - name: Set up .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0'  # Ajusta según tu versión
+        dotnet-version: '8.0'  
 
     - name: Publish application
       run: dotnet publish --configuration Release --output ./publish
