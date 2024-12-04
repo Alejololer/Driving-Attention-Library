@@ -1,0 +1,61 @@
+name: .NET Core CI/CD
+
+on:
+  push:
+    branches:
+      - main      # o cualquier rama que uses para producción
+  pull_request:
+    branches:
+      - main      # o cualquier rama que uses para producción
+
+jobs:
+  build:
+    runs-on: windows-latest  # Puedes usar 'ubuntu-latest' si prefieres Linux
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0'  # Cambia a la versión que estés usando, como 7.0 o 8.0
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build solution
+      run: dotnet build --configuration Release
+
+    - name: Run tests
+      run: dotnet test --configuration Release --no-build --verbosity normal
+
+    - name: Publish application (optional)
+      run: dotnet publish --configuration Release --output ./publish
+
+  deploy:
+    runs-on: ubuntu-latest  # Usualmente en Linux para despliegues, o usa 'windows-latest'
+
+    needs: build  # Asegura que el paso de build se haya completado con éxito
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0'  # Ajusta según tu versión
+
+    - name: Publish application
+      run: dotnet publish --configuration Release --output ./publish
+
+    - name: Deploy to production (example)
+      run: |
+        echo "Deploying to production..."
+        # Aquí puedes agregar comandos de despliegue específicos como:
+        # ssh user@host 'deploy-script.sh'
+        # o usar alguna acción específica para AWS, Azure, Heroku, etc.
+        # Por ejemplo, para desplegar en Azure:
+        # az webapp deploy --resource-group <RG_NAME> --name <APP_NAME> --src-path ./publish
+
